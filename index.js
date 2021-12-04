@@ -2,7 +2,11 @@ const express = require('express');
 const cors =require('cors')
 
 const app = express();
-const{videoList}=require('./dataBase')
+
+const{InitaliseDataBaseConnection}=require('./DataBase/db.connect')
+
+const {VideoList}=require('./Models/videoList.model')
+
 app.use(cors())
 
 const videoListRoute= require('./Routes/videoList.route')
@@ -19,9 +23,17 @@ app.use('/videos',videoListRoute)
 app.use('/history',historyRoute)
 app.use('/playlists',playlistsRoute)
 app.use('/likedVideos',likedVideosRoute)
-app.use('/notes',notesRoute)
-app.get('/', (req, res) => {
-  res.json({response:videoList})
+app.use('/notes',notesRoute);
+
+InitaliseDataBaseConnection();
+
+app.get('/', async(req, res) => {
+   try{
+    const videoList=await VideoList.find({});
+     res.json({response:videoList})
+  }catch(error){
+    console.log(error)
+  }
 });
 
 app.listen(3000, () => {

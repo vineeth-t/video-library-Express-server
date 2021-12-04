@@ -1,7 +1,7 @@
 const express =require('express')
 const router=express.Router();
 const bodyParser=require('body-parser')
-
+const {PlaylistModel} =require('../Models/playlist.model')
 let playlists=[{
                    playListName:'WatchLater',        playListId:'1',
                    listOfVideos:[]
@@ -13,7 +13,6 @@ router.route('/')
 .get((req,res)=>{
        res.status(200).json({response:playlists})
 })
-//playlist created
 .post((req,res)=>{
         const body=req.body
         if(playlists.some((playlist)=>playlist.playListName===body.playListName)){

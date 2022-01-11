@@ -8,7 +8,7 @@ const VideoListSchema=mongoose.Schema({
   views:String, 
   UploadedDate:String,
   likes:Number
-})
+},{versionKey: false})
 
 const VideoList= mongoose.model('video',VideoListSchema)
 module.exports={VideoList}

@@ -1,9 +1,10 @@
-const mongoose=require('mongoose')
+const mongoose=require('mongoose');
+const{Schema}=mongoose
 
 const PlaylistSchema= mongoose.Schema({
-                   playListName:String,
-                   playListId:String,
-                   listOfVideos:Array
+    userId:{type:Schema.Types.ObjectId,ref:'user'},
+    playListName: String,
+    listOfVideos:[{video:{type:Schema.Types.ObjectId,ref:'video'}}]
   })
 
 const PlaylistModel=mongoose.model('playlist',PlaylistSchema)

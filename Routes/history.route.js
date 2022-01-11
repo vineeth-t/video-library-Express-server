@@ -1,29 +1,60 @@
-const express= require('express')
-const bodyParser=require('body-parser');
+const express = require('express')
+const router = express.Router()
+const { HistoryVideosModel } = require('../Models/history.model')
 
-const router= express.Router()
-let history=[];
-router.use(bodyParser.json())
+const bodyParser = require('body-parser')
+router.use(bodyParser.json());
 
-router.route('/')
-.get((req,res)=>{
-  res.status(200).json({response:history})
+
+router.param('userId', async (req, res, next, userId) => {
+  try {
+    const findHistory = await HistoryVideosModel.findOne({ userId })
+    if (!findHistory) {
+      let historyObject = await HistoryVideosModel({ userId: userId, videos: [] })
+      historyObject = await historyObject.save()
+      req.history = historyObject
+    } else {
+      req.history = findHistory
+    }
+    next();
+  } catch (error) {
+    console.log(error)
+  }
+
 })
-router.route('/:id')
-.post((req,res)=>{
-  const videoToBeAdded=req.body
-  if(history.some(      (video=>video.id===videoToBeAdded.id))){
-                history=[...history]
-              }else{
-  history=[...history,videoToBeAdded]
-              }
 
- res.status(201).json({response:history})
-})
-.delete((req,res)=>{
-  const {id}=req.params;
-  history=[...history.filter((video)=>video.id!==id)]
+router.route("/:userId")
+  .get(async (req, res) => {
+    try {
+      const { history } = req
+      let { videos } = await history.populate('videos.video')
+      res.json({ response: true, historyVideos: videos })
+    } catch (error) {
+      res.json({ response: false, message: error.message })
+    }
 
-   res.status(200).json({response:history})
-})
- module.exports=router
+  })
+  .post(async (req, res) => {
+    try {
+      let historyVideos
+      const { history } = req;
+      const { videoId, flag } = req.body;
+      console.log(videoId,flag)
+      if (flag === 'DELETE') {
+        //video is Id stored as object
+        history.videos = await history.videos.filter(({ video }) => !video.equals(videoId));
+        console.log(history.videos)
+      } else if (!history.videos.some(({ video }) => video.equals(videoId))) {
+        historyVideos = await history.videos.push({ video: videoId })
+
+      }
+      historyVideos = await history.save();
+      let { videos } = await history.populate('videos.video')
+      res.json({ response: true, historyVideos: videos })
+    } catch (error) {
+      console.log(error)
+      res.json({ response: false, message: error })
+    }
+  })
+
+module.exports = router

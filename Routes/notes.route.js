@@ -5,8 +5,13 @@ const bodyParser=require('body-parser')
 router.use(bodyParser.json())
 let notesHolder=[]
 router.route("/")
-.get((req,res)=>{
+.get(async (req,res)=>{
+  try{
   res.json({response:notesHolder})
+  }catch(error){
+    console.log(error)
+  }
+
 })
 .post((req,res)=>{
   const body=req.body

@@ -25,7 +25,7 @@ router.route('/')
       } else {
         let user = await UserModel(body)
         user = await user.save();
-        res.json({ response: true, userId: user._id })
+        res.json({ response: true,name:user.firstname,token:'abcdefghi'})
       }
 
     } catch (error) {

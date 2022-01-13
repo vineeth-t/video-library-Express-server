@@ -2,11 +2,11 @@ const mySecret = process.env['dataBasePassword']
 const express = require('express');
 const cors = require('cors')
 
-
 const app = express();
 app.use(cors())
 const { routeNotFound } = require('./Middlewares/routeNotFound')
 
+const{authValidator}=require('./Middlewares/authValidator')
 const {errorHandler} =require('./Middlewares/errorHandler')
 
 const { InitaliseDataBaseConnection } = require('./DataBase/db.connect')
@@ -28,19 +28,15 @@ const signUp=require('./Routes/signUp.route.js');
 
 const logIn=require('./Routes/login.route.js');
 
-function logger(res,req,next){
-console.log('logged')
-}
-
 app.use('/videos', videoListRoute)
 app.use('/signUp',signUp)
 app.use('/login',logIn)
 /*Private Routes*/
-// app.use()
-app.use('/history',logger, historyRoute)
-app.use('/playlists', playlistsRoute)
-app.use('/likedVideos', likedVideosRoute)
-app.use('/notes', notesRoute);
+app.use(authValidator)
+app.use('/history', historyRoute)
+// app.use('/playlists', playlistsRoute)
+// // app.use('/likedVideos', likedVideosRoute)
+// app.use('/notes', notesRoute);
 
 InitaliseDataBaseConnection();
 

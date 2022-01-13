@@ -6,6 +6,8 @@ const bodyParser = require('body-parser');
 
 const { UserModel } = require('../Models/user.model')
 
+const{createAuthToken} =require('../Middlewares/authValidator')
+
 router.use(bodyParser.json())
 
 router.route('/')
@@ -17,7 +19,9 @@ router.route('/')
   const findUser=await UserModel.findOne({username});
   if(findUser){
     if(findUser.password===password){
-        res.json({response:true,fname:findUser.firstname,userId:findUser._id})
+        const token=createAuthToken(findUser._id)
+        console.log({token1:token})
+        res.json({response:true,name:findUser.firstname,token:token})
     }else{
         res.json({response:false,message:'Incorrect Password'})
     }

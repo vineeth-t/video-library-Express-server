@@ -2,9 +2,7 @@ const addOrDeleteHistory = async (req, res) => {
   try {
     let historyVideos;
     const { history } = req;
-    console.log(history)
     const { videoId, flag } = req.body;
-    console.log(videoId, flag)
     if (flag === 'DELETE') {
       //video prop is Id of actual video stored as object
       history.videos = await history.videos.filter(({ video }) => !video.equals(videoId));

@@ -1,51 +1,59 @@
-const express=require('express')
-const router=express.Router();
-const bodyParser=require('body-parser')
+const express = require('express')
+const router = express.Router();
+const bodyParser = require('body-parser')
+
+const { NotesModel } = require('../Models/notes.model')
 
 router.use(bodyParser.json())
-let notesHolder=[]
-router.route("/")
-.get(async (req,res)=>{
-  try{
-  res.json({response:notesHolder})
-  }catch(error){
-    console.log(error)
-  }
 
-})
-.post((req,res)=>{
-  const body=req.body
-  notesHolder=[...notesHolder,body]
-  res.json({response:notesHolder})
-})
-router.route('/:id')
-.get((req,res)=>{
-    const {id}=req.params
-    const body=req.body
-    const notesToBeSend= notesHolder.find((notes)=>notes.videoId===id)
-    res.json({response:notesToBeSend})
 
-})
-.post((req,res)=>{
-  const {id}=req.params
-  const body=req.body
-  notesHolder.map((notes)=>{
-    if( notes.videoId===id){
-      Object.keys(body).forEach((key)=>{
-        notes[key]=notes[key].concat(body.listOfNotes)
+const findNotesOfUser = async (req, res, next) => {
+
+  try {
+    const userId = req.userId;
+    const { videoId } = req.params;
+    const findNotesByUserId = await NotesModel.findOne({ userId, videoId });
+    if (!findNotesByUserId) {
+      let notesHolder = await NotesModel({
+        userId: userId,
+        videoId: videoId,
+        notes: []
       })
+      notesHolder = await notesHolder.save();
+      req.notesFolder = notesHolder
+    } else {
+      req.notesFolder = findNotesByUserId
     }
- })
- res.json({response:notesHolder})
-})
-router.route('/:id/:notesId')
-.delete((req,res)=>{
-  const{id,notesId}=req.params
- notesHolder.map((notes)=>{
-      if( notes.videoId===id){
-         notes.listOfNotes=notes.listOfNotes.filter((note)=>note.noteId!==notesId)
+    next()
+  } catch (error) {
+    console.log(error)
+    res.json({ response: false, message: 'Something went wrong' })
+  }
+}
+router.route('/:videoId')
+
+  .get(findNotesOfUser, (req, res) => {
+    const { notesFolder } = req
+    res.json({ response: true, notesFolder })
+  })
+
+  .post(findNotesOfUser, async (req, res) => {
+    try {
+      let { notesFolder } = req
+      const { note,flag } = req.body;
+      if (flag === 'DELETE') {
+        notesFolder.notes = notesFolder.notes.pull(note)
+      } else {
+        await notesFolder.notes.push(note);
+         
       }
-    })
-  res.json({response:notesHolder})
-})
-module.exports=router
+      notesFolder = await notesFolder.save();
+      res.json({ response: true, notesFolder })
+    } catch (error) {
+      console.log(error);
+      res.json({ response: false, message: error.message })
+    }
+  })
+
+
+module.exports = router

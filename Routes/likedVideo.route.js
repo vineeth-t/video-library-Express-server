@@ -9,7 +9,7 @@ router.use(bodyParser.json());
 const likeVideosMiddleWare= async (req, res, next) => {
   //find whether there is likedVideo array is present if not create a new one and add videos to it.
   try{
-    const{userId}=req.userId
+    const userId=req.userId
   const likedVideosList = await LikedVideoModel.findOne({ userId })
   if (!likedVideosList) {
     let likedVideosObject = await LikedVideoModel({ userId: userId, videos: [] })

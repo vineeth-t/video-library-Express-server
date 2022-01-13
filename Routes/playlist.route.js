@@ -2,16 +2,11 @@ const express = require('express')
 const router = express.Router();
 const bodyParser = require('body-parser')
 router.use(bodyParser.json())
+const { addOrRemoveFromPlaylist, findPlaylistsOfUser, getPlaylistById, createNewPlaylist, deletePlaylist } = require('../Controllers/playlists.controller')
 
-const { PlaylistModel } = require('../Models/playlist.model')
+router.route('/')
 
-const { addOrRemoveFromPlaylist, findPlaylistsOfUser, getPlaylistById,createNewPlaylist,deletePlaylist } = require('../Controllers/playlists.controller')
-
-router.param('userId', findPlaylistsOfUser)
-
-router.route('/:userId')
-
-  .get(async (req, res) => {
+  .get(findPlaylistsOfUser, async (req, res) => {
     //getting all playlists
     try {
       const { playlists } = req
@@ -21,13 +16,13 @@ router.route('/:userId')
       res.json({ response: false, message: error.message })
     }
   })
-  .post(createNewPlaylist)
-  
+  .post(findPlaylistsOfUser, createNewPlaylist)
 
-router.route('/:userId/:playlistId')
 
-  .get(getPlaylistById)
-  .post(addOrRemoveFromPlaylist)
-  .delete(deletePlaylist)
+router.route('/:playlistId')
+
+  .get(findPlaylistsOfUser, getPlaylistById)
+  .post(findPlaylistsOfUser, addOrRemoveFromPlaylist)
+  .delete(findPlaylistsOfUser, deletePlaylist)
 
 module.exports = router

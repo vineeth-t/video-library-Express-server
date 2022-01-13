@@ -1,10 +1,14 @@
-const mongoose= require('mongoose');
-const {Schema} = mongoose
-const NotesSchema= new mongoose.Schema({
-  userId:{type:Schema.Types.ObjectId,ref:'user'},
-  Notes:[{video:{type:Schema.Types.ObjectId,ref:'video'}}]
+const mongoose = require('mongoose');
+const { Schema } = mongoose
+const NotesSchema = new mongoose.Schema({
+  userId: { type: Schema.Types.ObjectId, ref: 'user' },
+  videoId: { type: String, required:true},
+  notes: [{
+    type:String,
+    required:true
+  }]
 })
 
-const LikedVideoModel = mongoose.model('likedvideo',LikedVideosSchema)
+const NotesModel = mongoose.model('notes', NotesSchema)
 
-module.exports={LikedVideoModel}
+module.exports = { NotesModel }

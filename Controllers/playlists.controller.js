@@ -5,7 +5,6 @@ const getPlaylistById = async (req, res) => {
     const { playlists } = req
     const { playlistId } = req.params
     const findPlaylistById = playlists.find(({ _id }) => _id.equals(playlistId))
-    console.log(findPlaylistById)
     res.json({ response: true, playlist: findPlaylistById })
   } catch (error) {
     res.json({ response: false, message: error.message })
@@ -14,7 +13,7 @@ const getPlaylistById = async (req, res) => {
 
 const createNewPlaylist = async (req, res) => {
   try {
-    const { userId } = req
+    const  userId  = req.userId;
     const { name, videoId } = req.body;
     let newPlaylist = await PlaylistModel({
       userId: userId,
@@ -33,12 +32,11 @@ const createNewPlaylist = async (req, res) => {
 
 const deletePlaylist = async (req, res) => {
   try {
-    const { playlistId } = req.params
-    let findPlaylists = await PlaylistModel.deleteOne({playlistId})
-   findPlaylists= await findPlaylists.save()
+    const { playlistId } = req.params;
+    const  userId  = req.userId;
+    let findPlaylists = await PlaylistModel.deleteOne({_id: playlistId })
     findPlaylists = await PlaylistModel.find({ userId }).populate('listOfVideos.video')
-    console.log(findPlaylists)
-    res.json({ response: true, message: 'Playlist Created', playlists: findPlaylists })
+    res.json({ response: true, message: 'Playlist deleted', playlists: findPlaylists })
   }
   catch (error) {
     console.log(error);
@@ -48,10 +46,9 @@ const deletePlaylist = async (req, res) => {
 
 const addOrRemoveFromPlaylist = async (req, res) => {
   try {
-    const { userId } = req;
+    const  userId  = req.userId;
     const { name, videoId, flag } = req.body;
     let message;
-    console.log(name, videoId, flag)
     let playlists = await PlaylistModel.find({ userId })
     let findPlaylistByName = playlists.find(({ playListName }) => playListName === name);
     if (flag === 'DELETE') {
@@ -72,8 +69,9 @@ const addOrRemoveFromPlaylist = async (req, res) => {
 }
 
 
-const findPlaylistsOfUser = async (req, res, next, userId) => {
+const findPlaylistsOfUser = async (req, res, next) => {
   try {
+    const  userId  = req.userId;
     const findPlaylists = await PlaylistModel.find({ userId }).populate('listOfVideos.video');
     if (findPlaylists.length === 0) {
       let createNewPlaylist = await PlaylistModel({

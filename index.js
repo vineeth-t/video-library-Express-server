@@ -35,7 +35,7 @@ app.use('/login',logIn)
 app.use(authValidator)
 app.use('/history', historyRoute)
 // app.use('/playlists', playlistsRoute)
-// // app.use('/likedVideos', likedVideosRoute)
+app.use('/likedVideos', likedVideosRoute)
 // app.use('/notes', notesRoute);
 
 InitaliseDataBaseConnection();

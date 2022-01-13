@@ -6,9 +6,10 @@ const bodyParser = require('body-parser')
 router.use(bodyParser.json());
 
 
-router.param('userId', async (req, res, next, userId) => {
+const likeVideosMiddleWare= async (req, res, next) => {
   //find whether there is likedVideo array is present if not create a new one and add videos to it.
   try{
+    const{userId}=req.userId
   const likedVideosList = await LikedVideoModel.findOne({ userId })
   if (!likedVideosList) {
     let likedVideosObject = await LikedVideoModel({ userId: userId, videos: [] })
@@ -22,10 +23,10 @@ router.param('userId', async (req, res, next, userId) => {
     console.log(error)
   }
 
-})
+}
 
-router.route("/:userId")
-  .get(async (req, res) => {
+router.route("/")
+  .get(likeVideosMiddleWare,async (req, res) => {
     try {
       const { likedVideosList } = req
       let { videos } = await likedVideosList.populate('videos.video')
@@ -35,7 +36,7 @@ router.route("/:userId")
     }
 
   })
-  .post(async (req, res) => {
+  .post(likeVideosMiddleWare,async (req, res) => {
     try {
       const { likedVideosList } = req
       const { videoId } = req.body;

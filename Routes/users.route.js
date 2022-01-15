@@ -18,7 +18,6 @@ router.route('/')
 
   .post(async (req, res) => {
     const userId = req.userId;
-    console.log(req.body)
     const { currentPassword, newPassword } = req.body
     
     const findUser = await UserModel.findById(userId);

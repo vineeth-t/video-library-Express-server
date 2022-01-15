@@ -1,7 +1,5 @@
 const jwt = require('jsonwebtoken')
-
-const secret = 'avdfgh'
-
+const secret = process.env['secret']
 const authValidator = (req, res, next) => {
   try {
     const token = req.headers.authorization;

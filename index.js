@@ -28,6 +28,8 @@ const signUp=require('./Routes/signUp.route.js');
 
 const logIn=require('./Routes/login.route.js');
 
+const users=require('./Routes/users.route.js')
+
 app.use('/videos', videoListRoute)
 app.use('/signUp',signUp)
 app.use('/login',logIn)
@@ -37,6 +39,7 @@ app.use('/history', historyRoute)
 app.use('/playlists', playlistsRoute)
 app.use('/likedVideos', likedVideosRoute)
 app.use('/notes', notesRoute);
+app.use('/user',users)
 
 InitaliseDataBaseConnection();
 

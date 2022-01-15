@@ -4,6 +4,8 @@ const router = express.Router();
 
 const bodyParser = require('body-parser');
 
+const bcrypt= require('bcryptjs')
+
 const { UserModel } = require('../Models/user.model')
 
 const{createAuthToken} =require('../Middlewares/authValidator')
@@ -17,7 +19,8 @@ router.route('/')
   const {username,password}= req.body;
   const findUser=await UserModel.findOne({username});
   if(findUser){
-    if(findUser.password===password){
+    const confirmPassword=await bcrypt.compare(password,findUser.password)
+    if(confirmPassword){
         const token=createAuthToken(findUser._id)
         res.json({response:true,name:findUser.firstname,token:token})
     }else{

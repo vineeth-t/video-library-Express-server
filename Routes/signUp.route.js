@@ -2,6 +2,8 @@ const express = require('express');
 
 const router = express.Router();
 
+const bcrypt= require('bcryptjs')
+
 const bodyParser = require('body-parser');
 
 const { UserModel } = require('../Models/user.model')
@@ -23,7 +25,9 @@ router.route('/')
       if (findUserbyId) {
         res.json({ response: false, message: 'UserId already Exists' })
       } else {
-        let user = await UserModel(body)
+        let user = await UserModel(body);
+        const salts=10
+        user.password= await bcrypt.hash(user.password,salts)
         user = await user.save();
         res.json({ response: true,name:user.firstname,token:'abcdefghi'})
       }

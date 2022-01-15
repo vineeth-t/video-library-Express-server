@@ -2,6 +2,8 @@ const mySecret = process.env['dataBasePassword']
 const express = require('express');
 const cors = require('cors')
 
+const port = 3000;
+
 const app = express();
 app.use(cors())
 const { routeNotFound } = require('./Middlewares/routeNotFound')
@@ -57,6 +59,6 @@ app.get('/', async (req, res) => {
 */
 app.use(routeNotFound)
 app.use(errorHandler)
-app.listen(3000, () => {
-  console.log('server started');
-});
+app.listen( process.env.PORT || port, () => {
+    console.log(`server started`)
+  })

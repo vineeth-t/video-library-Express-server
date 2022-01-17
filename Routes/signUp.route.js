@@ -2,7 +2,7 @@ const express = require('express');
 
 const router = express.Router();
 
-const bcrypt= require('bcryptjs')
+const bcrypt= require('bcrypt')
 
 const bodyParser = require('body-parser');
 
@@ -30,7 +30,7 @@ router.route('/')
         const salts=10
         user.password= await bcrypt.hash(user.password,salts)
         user = await user.save();
-        res.json({ response: true,name:user.firstname,token:token})
+        res.json({ response: true,token:token})
       }
 
     } catch (error) {

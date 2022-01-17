@@ -4,10 +4,12 @@ const authValidator = (req, res, next) => {
   try {
     const token = req.headers.authorization;
     const decoded = jwt.verify(token, secret)
+    console.log(token,secret,decoded)
     req.userId = decoded.userId
     next()
   }
   catch (error) {
+    console.log(error)
     res.status(401).json({ response: false, message: 'Authentication Failed' })
   }
 

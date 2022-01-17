@@ -1,4 +1,3 @@
-const mySecret = process.env['dataBasePassword']
 const express = require('express');
 const cors = require('cors')
 

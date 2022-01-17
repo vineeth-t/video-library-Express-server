@@ -4,7 +4,7 @@ const router = express.Router();
 
 const bodyParser = require('body-parser');
 
-const bcrypt= require('bcryptjs')
+const bcrypt= require('bcrypt')
 
 const { UserModel } = require('../Models/user.model')
 
@@ -18,11 +18,12 @@ router.route('/')
   try{
   const {username,password}= req.body;
   const findUser=await UserModel.findOne({username});
+  console.log(findUser)
   if(findUser){
     const confirmPassword=await bcrypt.compare(password,findUser.password)
     if(confirmPassword){
         const token=createAuthToken(findUser._id)
-        res.json({response:true,name:findUser.firstname,token:token})
+        res.json({response:true,token:token})
     }else{
         res.json({response:false,message:'Incorrect Password'})
     }
